@@ -1,4 +1,4 @@
-package org.tonylin.practice.camel;
+package org.tonylin.practice.camel.rest;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
