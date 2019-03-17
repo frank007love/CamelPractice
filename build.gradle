@@ -21,10 +21,6 @@ ext {
 }
 
 dependencies {
-    // This dependency is exported to consumers, that is to say found on their compile classpath.
-    api 'org.apache.commons:commons-math3:3.6.1'
-
-    // This dependency is used internally, and not exposed to consumers on their own compile classpath.
     compile group: 'org.apache.camel', name: 'camel-core', version: "$camelVersion"
     compile group: 'org.apache.camel', name: 'camel-netty4-http', version: "$camelVersion"
     compile group: 'org.apache.camel', name: 'camel-http-common', version: "$camelVersion"
@@ -36,9 +32,7 @@ dependencies {
     runtime group: 'org.slf4j', name: 'slf4j-log4j12', version: "$slf4jVersion"
     testCompile group: 'org.apache.camel', name: 'camel-test', version: "$camelVersion"
     testCompile group: 'org.apache.httpcomponents', name: 'httpclient', version: "$httpClientVersion"
-    
-    // Use JUnit test framework
-    testImplementation 'junit:junit:4.12'
+    testCompile 'junit:junit:4.12'
 }
 
 // In this section you declare where to find the dependencies of your project
