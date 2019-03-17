@@ -52,6 +52,10 @@ public class AggregatorGroupRouteBuilderTest extends CamelTestSupport  {
 			checkState(countDownLatch!=null);
 			countDownLatch.await(timeout, TimeUnit.MILLISECONDS);
 		}
+		
+		public void clear() {
+			requestData.clear();
+		}
 	}
 
 	
@@ -59,9 +63,12 @@ public class AggregatorGroupRouteBuilderTest extends CamelTestSupport  {
 	
 	@Override
 	protected RoutesBuilder[] createRouteBuilders() throws Exception {
+		AggregatorGroupRouteBuilder aggregatorGroupRouteBuilder = new AggregatorGroupRouteBuilder(hander);
+		aggregatorGroupRouteBuilder.setPeriod(500);
+		
 		return new RoutesBuilder[] {
 				new RestRouteBuilder(),
-				new AggregatorGroupRouteBuilder(hander)
+				aggregatorGroupRouteBuilder
 		};
 	}
 	
@@ -97,4 +104,31 @@ public class AggregatorGroupRouteBuilderTest extends CamelTestSupport  {
 		assertEquals(1, requestData.get("789").size());
 	}
 
+	private void requestTwiceWithId(String id) throws Exception {
+		// request event {id} twice
+		List<String> eventIds = Arrays.asList(id, id);
+		hander.expectNum(1);
+		List<HttpResponse> responses = eventIds.parallelStream().map(this::requestWithEventId).collect(Collectors.toList());
+		responses.forEach(response->{
+			assertEquals(200, response.getStatusLine().getStatusCode());
+		});
+		
+		hander.waitCompletion(1000);
+		
+		// confirm request result
+		Map<String, List<Exchange>> requestData = hander.getRequestData();
+		assertEquals(1, requestData.size());
+		assertEquals(2, requestData.get("123").size());
+		
+		// clear first request data
+		hander.clear();
+		assertTrue(hander.getRequestData().isEmpty());
+	}
+	
+	@Test
+	public void testCompletionInterval() throws Exception {
+		requestTwiceWithId("123");
+		requestTwiceWithId("123");
+	}
 }
+

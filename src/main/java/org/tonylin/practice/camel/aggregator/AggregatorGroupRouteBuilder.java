@@ -10,10 +10,15 @@ public class AggregatorGroupRouteBuilder extends RouteBuilder {
 	private final static String GET_EVENTS = "GET_EVENTS";
 	
 	private Object eventHandler;
+	private int period = 500;
 	
 	public AggregatorGroupRouteBuilder(Object eventHandler) {
 		this.eventHandler = eventHandler;
 
+	}
+	
+	public void setPeriod(int period) {
+		this.period = period;
 	}
 	
 	@Override
@@ -21,7 +26,9 @@ public class AggregatorGroupRouteBuilder extends RouteBuilder {
 		checkState(eventHandler!=null, "Can't find eventHandler");
 		
 		rest("/events/{id}").get().route().id(GET_EVENTS)
-		.aggregate(new GroupedExchangeAggregationStrategy()).header("id").completionInterval(500)
+		.aggregate(new GroupedExchangeAggregationStrategy())
+		.header("id")
+		.completionInterval(period)
 		.bean(eventHandler).endRest();
 	}
 }
