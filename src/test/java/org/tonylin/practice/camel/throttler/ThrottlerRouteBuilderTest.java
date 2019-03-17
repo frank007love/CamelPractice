@@ -48,6 +48,7 @@ public class ThrottlerRouteBuilderTest extends CamelTestSupport {
 		List<HttpResponse> responses = batchRequest(3);
 
 		// then
+		assertEquals(2, hander.getRequestIds().size());
 		assertEquals(200, responses.get(0).getStatusLine().getStatusCode());
 		assertEquals(200, responses.get(1).getStatusLine().getStatusCode());
 		assertEquals(503, responses.get(2).getStatusLine().getStatusCode());
@@ -62,6 +63,7 @@ public class ThrottlerRouteBuilderTest extends CamelTestSupport {
 		responses.addAll(batchRequest(3));
 		
 		// then
+		assertEquals(4, hander.getRequestIds().size());
 		assertEquals(200, responses.get(0).getStatusLine().getStatusCode());
 		assertEquals(200, responses.get(1).getStatusLine().getStatusCode());
 		assertEquals(503, responses.get(2).getStatusLine().getStatusCode());
